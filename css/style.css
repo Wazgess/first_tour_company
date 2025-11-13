@@ -1,0 +1,90 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #212529;
+}
+
+/* HERO BLOCK */
+.hero {
+  background: url('../img/bg-city.png') no-repeat center center/cover;
+  min-height: 80vh;
+  color: #212529;
+}
+
+/* FOOTER */
+.footer {
+  background-color: #f4f9fa;
+}
+
+/* NAVIGATION */
+.nav-link:hover {
+  color: #0d6efd !important;
+}
+
+/* GENERAL */
+h2 {
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border: none;
+}
+.btn-primary:hover {
+  background-color: #0b5ed7;
+}
+header, footer {
+    font-weight: normal; 
+}
+/* TOUR CARDS */
+.hero-tours .card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  height: 100%;
+  max-width: 320px; /* ограничивает ширину карточки */
+  margin: 0 auto;
+}
+
+.hero-tours .card:hover {
+  transform: translateY(-5px);
+}
+
+/* Изображения внутри карточек */
+.hero-tours .card-img-top {
+  height: 500px; /* фиксированная высота как в макете */
+  object-fit: cover; /* чтобы фото не искажались */
+  border-bottom: 1px solid #ddd;
+}
+
+/* Текст карточки */
+.hero-tours .card-body {
+  background: #fff;
+  padding: 1rem;
+}
+/* SPECIALISTS CARDS */
+.hero-specialists .card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  height: 100%;
+  max-width: 320px; /* ограничиваем ширину карточки */
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-specialists .card:hover {
+  transform: translateY(-5px);
+}
+
+/* Фото специалистов */
+.hero-specialists .card-img-top {
+  height: 400px; /* выравнивает все карточки по высоте */
+  object-fit: cover; /* сохраняет пропорции лица, обрезает лишнее */
+  border-bottom: 1px solid #ddd;
+}
+
+/* Тело карточки */
+.hero-specialists .card-body {
+  background: #fff;
+  padding: 1rem;
+}
