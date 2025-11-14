@@ -128,9 +128,11 @@ header, footer {
     }
 
     .invalid-feedback {
-      display: block;
-      font-size: 14px;
+    display: none;
     }
+    .is-invalid ~ .invalid-feedback {
+    display: block;
+}
 
     /* Spacing between form fields */
     .modal-body .form-group {

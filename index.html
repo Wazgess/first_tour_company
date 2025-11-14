@@ -47,25 +47,25 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <h2 class="text-center mb-4">Получите консультацию</h2>
-        <form id="consultForm">
+        <form id="consultForm" class="needs-validation" novalidate> 
           <div class="modal-body">
             <div class="form-group">
               <label for="name" class="form-label">Имя</label>
-              <input type="text" id="name" class="form-control" required>
+              <input type="text" id="name" class="form-control" >
             </div>
             <div class="form-group">
               <label for="phone" class="form-label">Телефон</label>
-              <input type="text" id="phone" class="form-control" placeholder="+375 (__) ___-__-__" required>
+              <input type="text" id="phone" class="form-control" placeholder="+375 (__) ___-__-__" >
               <div class="invalid-feedback">Пожалуйста, введите корректный номер телефона.</div>
             </div>
             <div class="form-group">
               <label for="email" class="form-label">Почта</label>
-              <input type="email" id="email" class="form-control" required>
+              <input type="email" id="email" class="form-control" >
               <div class="invalid-feedback">Пожалуйста, введите корректный адрес электронной почты.</div>
             </div>
             <div class="form-group">
               <label for="service" class="form-label">Услуга</label>
-              <input type="text" id="service" class="form-control" required>
+              <input type="text" id="service" class="form-control" >
             </div>
           </div>
           <div class="modal-footer">
@@ -101,37 +101,28 @@
 
   const phoneInput = document.getElementById('phone');
 
-  // Автоматическая маска
   phoneInput.addEventListener('input', function () {
-    let value = phoneInput.value.replace(/\D/g, '');
+    let value = this.value.replace(/\D/g, '');
+    value = value.slice(0, 12);
 
-        value = value.slice(0, 12);
+    let formatted = "";
 
-        let formatted = "";
+    if (value.length > 0) formatted += "+" + value.substring(0, 3);
+    if (value.length >= 4) formatted += " (" + value.substring(3, 5);
+    if (value.length >= 6) formatted += ") " + value.substring(5, 8);
+    if (value.length >= 9) formatted += "-" + value.substring(8, 10);
+    if (value.length >= 11) formatted += "-" + value.substring(10, 12);
 
-        if (value.length > 0) {
-            formatted += "+" + value.substring(0, 3);
-        }
-        if (value.length >= 4) {
-            formatted += " (" + value.substring(3, 5);
-        }
-        if (value.length >= 6) {
-            formatted += ") " + value.substring(5, 8);
-        }
-        if (value.length >= 9) {
-            formatted += "-" + value.substring(8, 10);
-        }
-        if (value.length >= 11) {
-            formatted += "-" + value.substring(10, 12);
-        }
+    this.value = formatted;
 
-        phoneInput.value = formatted;
+    // Убираем ошибку при корректном вводе
+    if (validatePhone(this.value)) {
+      this.classList.remove("is-invalid");
+    }
   });
 
-
-
   // ---------------------------
-  // PHONE VALIDATION
+  // PHONE VALIDATION FUNCTION
   // ---------------------------
   function validatePhone(phone) {
     const phonePattern = /^\+375\s\(\d{2}\)\s\d{3}-\d{2}-\d{2}$/;
@@ -139,57 +130,72 @@
   }
 
   // ---------------------------
-  // FORM VALIDATION
+  // LIVE EMAIL VALIDATION
+  // ---------------------------
+  const emailInput = document.getElementById("email");
+  emailInput.addEventListener("input", function () {
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+    if (emailPattern.test(this.value)) {
+      this.classList.remove("is-invalid");
+    }
+  });
+
+  // ---------------------------
+  // LIVE NAME + SERVICE CORRECTION
+  // ---------------------------
+  ["name", "service"].forEach(id => {
+    document.getElementById(id).addEventListener("input", function () {
+      if (this.value.trim() !== "") {
+        this.classList.remove("is-invalid");
+      }
+    });
+  });
+
+  // ---------------------------
+  // FORM VALIDATION ON SUBMIT
   // ---------------------------
   document.getElementById('consultForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
-    const name = document.getElementById('name').value;
-    const phone = document.getElementById('phone').value;
-    const email = document.getElementById('email').value;
-    const service = document.getElementById('service').value;
+    const name = document.getElementById('name');
+    const phone = document.getElementById('phone');
+    const email = document.getElementById('email');
+    const service = document.getElementById('service');
 
     let valid = true;
 
-    // Name
-    if (!name) {
-      document.getElementById('name').classList.add('is-invalid');
+    // Name (Ошибка только если ПОЛЕ НЕ ПУСТОЕ и НЕ валидно)
+    if (name.value.trim() === "") {
+      name.classList.add('is-invalid');
       valid = false;
-    } else {
-      document.getElementById('name').classList.remove('is-invalid');
     }
 
     // Phone
-    if (!validatePhone(phone)) {
-      document.getElementById('phone').classList.add('is-invalid');
+    if (phone.value.trim() !== "" && !validatePhone(phone.value)) {
+      phone.classList.add('is-invalid');
       valid = false;
-    } else {
-      document.getElementById('phone').classList.remove('is-invalid');
     }
 
     // Email
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    if (!emailPattern.test(email)) {
-      document.getElementById('email').classList.add('is-invalid');
+    if (email.value.trim() !== "" && !emailPattern.test(email.value)) {
+      email.classList.add('is-invalid');
       valid = false;
-    } else {
-      document.getElementById('email').classList.remove('is-invalid');
     }
 
     // Service
-    if (!service) {
-      document.getElementById('service').classList.add('is-invalid');
+    if (service.value.trim() === "") {
+      service.classList.add('is-invalid');
       valid = false;
-    } else {
-      document.getElementById('service').classList.remove('is-invalid');
     }
 
     if (valid) {
       alert("Форма отправлена!");
-      // Здесь можно отправлять данные на сервер
     }
   });
 </script>
+
 
 </body>
 </html>
