@@ -103,69 +103,32 @@
 
   // Автоматическая маска
   phoneInput.addEventListener('input', function () {
-    let value = phoneInput.value.replace(/\D/g, ''); // только цифры
+    let value = phoneInput.value.replace(/\D/g, '');
 
-    // ограничиваем максимум 9 цифр (2 код + 7 номер)
-    value = value.substring(0, 9);
+        value = value.slice(0, 12);
 
-    let formatted = "+375";
+        let formatted = "";
 
-    if (value.length > 0) {
-      formatted += " (" + value.substring(0, 2);
-    }
-    if (value.length >= 2) {
-      formatted += ") ";
-    }
-    if (value.length > 2) {
-      formatted += value.substring(2, 5);
-    }
-    if (value.length >= 5) {
-      formatted += "-" + value.substring(5, 7);
-    }
-    if (value.length >= 7) {
-      formatted += "-" + value.substring(7, 9);
-    }
+        if (value.length > 0) {
+            formatted += "+" + value.substring(0, 3);
+        }
+        if (value.length >= 4) {
+            formatted += " (" + value.substring(3, 5);
+        }
+        if (value.length >= 6) {
+            formatted += ") " + value.substring(5, 8);
+        }
+        if (value.length >= 9) {
+            formatted += "-" + value.substring(8, 10);
+        }
+        if (value.length >= 11) {
+            formatted += "-" + value.substring(10, 12);
+        }
 
-    phoneInput.value = formatted;
+        phoneInput.value = formatted;
   });
 
-  // Исправление backspace — теперь можно стирать нормально
-  phoneInput.addEventListener("keydown", function (e) {
-    if (e.key === "Backspace") {
-      const raw = phoneInput.value.replace(/\D/g, '');
 
-      // Если цифр нет — очищаем полностью
-      if (raw.length === 0) {
-        phoneInput.value = "";
-        e.preventDefault();
-        return;
-      }
-
-      // Удаляем последнюю цифру
-      const newRaw = raw.slice(0, -1);
-
-      let formatted = "+375";
-
-      if (newRaw.length > 0) {
-        formatted += " (" + newRaw.substring(0, 2);
-      }
-      if (newRaw.length >= 2) {
-        formatted += ") ";
-      }
-      if (newRaw.length > 2) {
-        formatted += newRaw.substring(2, 5);
-      }
-      if (newRaw.length >= 5) {
-        formatted += "-" + newRaw.substring(5, 7);
-      }
-      if (newRaw.length >= 7) {
-        formatted += "-" + newRaw.substring(7, 9);
-      }
-
-      phoneInput.value = formatted;
-      e.preventDefault();
-    }
-  });
 
   // ---------------------------
   // PHONE VALIDATION
