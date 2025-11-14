@@ -9,60 +9,6 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    /* Custom styles */
-    .modal-content {
-      background-color: #A2DFF7; /* Light blue background */
-      border-radius: 8px;
-      padding: 30px;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-control {
-      border-radius: 20px; /* Rounded corners for input fields */
-    }
-
-    .btn-primary {
-      background-color: #004C87; /* Custom blue color for the button */
-      border-radius: 20px; /* Rounded corners for the button */
-      padding: 10px 30px;
-    }
-
-    .hero {
-      background-color: #A2DFF7;
-      padding: 50px 0;
-    }
-
-    .hero .btn {
-      background-color: #004C87;
-      color: white;
-      font-size: 16px;
-    }
-
-    .hero h2 {
-      font-size: 30px;
-      font-weight: 600;
-    }
-
-    .hero p {
-      font-size: 18px;
-      font-weight: 300;
-    }
-
-    .invalid-feedback {
-      display: block;
-      font-size: 14px;
-    }
-
-    /* Spacing between form fields */
-    .modal-body .form-group {
-      margin-bottom: 15px;
-    }
-
-    .modal-dialog {
-      max-width: 600px; /* Set a max width for the modal */
-    }
-  </style>
 </head>
 <body>
 
@@ -109,7 +55,7 @@
             </div>
             <div class="form-group">
               <label for="phone" class="form-label">Телефон</label>
-              <input type="text" id="phone" class="form-control" required>
+              <input type="text" id="phone" class="form-control" placeholder="+375 (__) ___-__-__" required>
               <div class="invalid-feedback">Пожалуйста, введите корректный номер телефона.</div>
             </div>
             <div class="form-group">
@@ -146,63 +92,141 @@
   </footer>
 
   <!-- JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Phone number validation
-    function validatePhone(phone) {
-      const phonePattern = /^[+]?[0-9]{10,15}$/;
-      return phonePattern.test(phone);
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // ---------------------------
+  // PHONE AUTO-MASK + FIXED BACKSPACE
+  // ---------------------------
+
+  const phoneInput = document.getElementById('phone');
+
+  // Автоматическая маска
+  phoneInput.addEventListener('input', function () {
+    let value = phoneInput.value.replace(/\D/g, ''); // только цифры
+
+    // ограничиваем максимум 9 цифр (2 код + 7 номер)
+    value = value.substring(0, 9);
+
+    let formatted = "+375";
+
+    if (value.length > 0) {
+      formatted += " (" + value.substring(0, 2);
+    }
+    if (value.length >= 2) {
+      formatted += ") ";
+    }
+    if (value.length > 2) {
+      formatted += value.substring(2, 5);
+    }
+    if (value.length >= 5) {
+      formatted += "-" + value.substring(5, 7);
+    }
+    if (value.length >= 7) {
+      formatted += "-" + value.substring(7, 9);
     }
 
-    // Form submission with validation
-    document.getElementById('consultForm').addEventListener('submit', function (e) {
+    phoneInput.value = formatted;
+  });
+
+  // Исправление backspace — теперь можно стирать нормально
+  phoneInput.addEventListener("keydown", function (e) {
+    if (e.key === "Backspace") {
+      const raw = phoneInput.value.replace(/\D/g, '');
+
+      // Если цифр нет — очищаем полностью
+      if (raw.length === 0) {
+        phoneInput.value = "";
+        e.preventDefault();
+        return;
+      }
+
+      // Удаляем последнюю цифру
+      const newRaw = raw.slice(0, -1);
+
+      let formatted = "+375";
+
+      if (newRaw.length > 0) {
+        formatted += " (" + newRaw.substring(0, 2);
+      }
+      if (newRaw.length >= 2) {
+        formatted += ") ";
+      }
+      if (newRaw.length > 2) {
+        formatted += newRaw.substring(2, 5);
+      }
+      if (newRaw.length >= 5) {
+        formatted += "-" + newRaw.substring(5, 7);
+      }
+      if (newRaw.length >= 7) {
+        formatted += "-" + newRaw.substring(7, 9);
+      }
+
+      phoneInput.value = formatted;
       e.preventDefault();
+    }
+  });
 
-      const name = document.getElementById('name').value;
-      const phone = document.getElementById('phone').value;
-      const email = document.getElementById('email').value;
-      const service = document.getElementById('service').value;
+  // ---------------------------
+  // PHONE VALIDATION
+  // ---------------------------
+  function validatePhone(phone) {
+    const phonePattern = /^\+375\s\(\d{2}\)\s\d{3}-\d{2}-\d{2}$/;
+    return phonePattern.test(phone);
+  }
 
-      let valid = true;
+  // ---------------------------
+  // FORM VALIDATION
+  // ---------------------------
+  document.getElementById('consultForm').addEventListener('submit', function (e) {
+    e.preventDefault();
 
-      // Name validation
-      if (!name) {
-        document.getElementById('name').classList.add('is-invalid');
-        valid = false;
-      } else {
-        document.getElementById('name').classList.remove('is-invalid');
-      }
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value;
+    const service = document.getElementById('service').value;
 
-      // Phone validation
-      if (!validatePhone(phone)) {
-        document.getElementById('phone').classList.add('is-invalid');
-        valid = false;
-      } else {
-        document.getElementById('phone').classList.remove('is-invalid');
-      }
+    let valid = true;
 
-      // Email validation
-      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-      if (!emailPattern.test(email)) {
-        document.getElementById('email').classList.add('is-invalid');
-        valid = false;
-      } else {
-        document.getElementById('email').classList.remove('is-invalid');
-      }
+    // Name
+    if (!name) {
+      document.getElementById('name').classList.add('is-invalid');
+      valid = false;
+    } else {
+      document.getElementById('name').classList.remove('is-invalid');
+    }
 
-      // Service validation
-      if (!service) {
-        document.getElementById('service').classList.add('is-invalid');
-        valid = false;
-      } else {
-        document.getElementById('service').classList.remove('is-invalid');
-      }
+    // Phone
+    if (!validatePhone(phone)) {
+      document.getElementById('phone').classList.add('is-invalid');
+      valid = false;
+    } else {
+      document.getElementById('phone').classList.remove('is-invalid');
+    }
 
-      if (valid) {
-        alert("Форма отправлена!");
-        // You can handle form submission here (e.g., send to server)
-      }
-    });
-  </script>
+    // Email
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailPattern.test(email)) {
+      document.getElementById('email').classList.add('is-invalid');
+      valid = false;
+    } else {
+      document.getElementById('email').classList.remove('is-invalid');
+    }
+
+    // Service
+    if (!service) {
+      document.getElementById('service').classList.add('is-invalid');
+      valid = false;
+    } else {
+      document.getElementById('service').classList.remove('is-invalid');
+    }
+
+    if (valid) {
+      alert("Форма отправлена!");
+      // Здесь можно отправлять данные на сервер
+    }
+  });
+</script>
+
 </body>
 </html>
